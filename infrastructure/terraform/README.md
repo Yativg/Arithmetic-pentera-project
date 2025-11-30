@@ -25,11 +25,13 @@ allowed_ssh_cidr = ["your.ip.address/32"]
    - `terraform.tfvars` (base config)
    - `terraform.tfvars.local` (your secrets, overrides base)
 
+3. Use aws creds:
+   - `export AWS_ACCESS_KEY_ID="your-access-key-id`
+   - `export AWS_SECRET_ACCESS_KEY="your-secret-access-key`
+
 **Alternative: Environment Variables**
 
 ```bash
-export TF_VAR_jenkins_admin_password="your-password"
-export TF_VAR_allowed_ssh_cidr='["your.ip/32"]'
 terraform apply
 ```
 
