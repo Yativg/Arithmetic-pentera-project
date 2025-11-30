@@ -1,0 +1,45 @@
+version: '3.8'
+
+services:
+  arithmetic-server:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: arithmetic-server:latest
+    container_name: arithmetic-server
+    ports:
+      - "5555:5555"
+    networks:
+      - arithmetic-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "python3", "-c", "import socket; s=socket.socket(); s.settimeout(1); s.connect(('localhost', 5555)); s.close()"]
+      interval: 30s
+      timeout: 3s
+      retries: 3
+      start_period: 5s
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  arithmetic-client:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: arithmetic-server:latest
+    container_name: arithmetic-client
+    command: ["python3", "/app/client.py", "arithmetic-server", "5555"]
+    networks:
+      - arithmetic-network
+    depends_on:
+      - arithmetic-server
+    stdin_open: true
+    tty: true
+    profiles:
+      - testing
+
+networks:
+  arithmetic-network:
+    driver: bridge
